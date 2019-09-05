@@ -1,0 +1,6 @@
+{
+  "/*": {
+    "target": "https://script.google.com",
+    "secure": true
+  }
+}

@@ -1,0 +1,171 @@
+<header id="header">
+  <div class="container">
+
+    <div id="logo" class="pull-left">
+      <h1>
+        <a href="javascript:void(0)" class="scrollto">HEADER</a>
+      </h1>
+      <!-- Uncomment below if you prefer to use an image logo -->
+      <!-- <a href="#intro"><img src="img/logo.png" alt="" title="" /></a>-->
+    </div>
+
+    <nav id="nav-menu-container">
+      <h3>Work Items : {{details?details.length:0 }}</h3>
+
+    </nav>
+    <!-- #nav-menu-container -->
+
+  </div>
+</header>
+<!-- #header -->
+
+<div class="container">
+
+
+  
+  <div class="container bootstrap snippet">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="main-box no-header clearfix">
+          <div class="row search-container">
+              <div class="col-md-2">
+                  <div class="input-group input-group-unstyled">
+                      <select [(ngModel)]=status name="status" placeholder='Select Status' class="form-control" required>
+                          <option value="Overdue">Overdue</option>
+                          <option value="Done">Done</option>
+                          <option value="In Progress">In Progress</option>
+                          </select>
+                  </div>
+              </div>
+            <div class="col-md-4">
+              <div class="input-group input-group-unstyled">
+                  <input type="text" placeholder="Search WorkItem" class="form-control" name="search" [(ngModel)]="search" />
+                  <span class="input-group-addon">
+                      <i class="fa fa-search"></i>
+                  </span>
+              </div>
+          </div>
+          
+          <div class="col-md-6 text-right">
+            
+            <button *ngIf="details && details.length > 0" (click)="SendDataToSheet()" class="btn btn-link"> <i class="fa fa-file-excel-o"></i> &nbsp; Export to Google Sheet </button>
+            <button (click)="createItem()" class="btn btn-success"> <i class="fa fa-plus"></i> &nbsp; Create </button>
+          </div>
+          </div>
+          <div class="main-box-body clearfix">
+              <div class="alert alert-info" *ngIf="message">
+                  {{message}}
+                </div>
+            <div class="table-responsive">
+              <table class="table user-list">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>WorkItem</th>
+                    <th>Due Date</th>
+                    <th>No. Resources Needed </th>
+                    <th>Status </th>
+                    <th>Actions </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngIf="(!details || details.length == 0)  && !createItemData">
+                    <td colspan="5">No Data Found</td>
+                  </tr>
+                  <tr *ngFor="let item of searchValue(details); let i = index">
+                    <td>{{i+1}}</td>
+                    <td>
+                      <span *ngIf="i != selectedItem">{{item.Item}}</span>
+                      <span *ngIf="i == selectedItem">
+                        <input [(ngModel)]=item.Item name="Item" placeholder='Enter Item' type="text" class="form-control"
+                          id="key" required>
+                      </span>
+                    </td>
+                    <td>
+                      <span *ngIf="i != selectedItem">{{item.Date | date: 'dd MMM yyyy'}}</span>
+                      <span *ngIf="i == selectedItem">
+                        <input [(ngModel)]="item.Date" (ngModelChange)="item.Date = $event" name="Date" placeholder='Enter Work Item'
+                          type="Date" class="form-control" id="value" required>
+                      </span>
+                    </td>
+                    <td>
+                      <span *ngIf="i != selectedItem">{{item.resources}}</span>
+                      <span *ngIf="i == selectedItem">
+                        <input [(ngModel)]=item.resources name="resources" placeholder='Enter Resources' type="number" class="form-control"
+                          id="key" required>
+                      </span>
+                    </td>
+                    <td>
+                        <span *ngIf="i != selectedItem">{{item.status}}</span>
+                        <span *ngIf="i == selectedItem">
+                          <select [(ngModel)]=item.status name="status" placeholder='Select Status' class="form-control" required>
+                            <option value="Overdue">Overdue</option>
+                            <option value="Done">Done</option>
+                            <option value="In Progress">In Progress</option>
+                            </select>
+                        </span>
+                      </td>
+                    <td>
+                      <span class="fa-stack" *ngIf="i != selectedItem" (click)="selectEditItem(i)">
+                        <i class="fa fa-square fa-stack-2x"></i>
+                        <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                      </span>
+                      <span class="fa-stack table-link danger" *ngIf="i != selectedItem" (click)="DeleteItem(item)">
+                        <i class="fa fa-square fa-stack-2x"></i>
+                        <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                      </span>
+                      <span class="fa-stack " *ngIf="i == selectedItem" (click)="edit(item)">
+                        <i class="fa fa-square fa-stack-2x"></i>
+                        <i class="fa fa-floppy-o fa-stack-1x fa-inverse"></i>
+                      </span>
+                      <span class="fa-stack table-link danger" *ngIf="i == selectedItem" (click)="selectedItem = null">
+                        <i class="fa fa-square fa-stack-2x"></i>
+                        <i class="fa fa-ban fa-stack-1x fa-inverse"></i>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="createItemData">
+                    <td>{{details?details.length:1 }}</td>
+                    <td>
+                      <input [(ngModel)]=createItemData.Item name="Item" placeholder='Enter Work Item' type="text" class="form-control"
+                        id="value" required>
+                    </td>
+                    <td>
+                      <input [(ngModel)]=createItemData.Date name="Date" placeholder='Enter Work Item' type="Date" class="form-control"
+                        id="value" required>
+                    </td>
+                    <td>
+                      <input [(ngModel)]=createItemData.resources name="resources" placeholder='Enter Work Item' type="number"
+                        class="form-control" id="value" required>
+                    </td>
+                    <td>
+                        <span *ngIf="i != selectedItem">{{item.status}}</span>
+                        <span *ngIf="i == selectedItem">
+                          <select [(ngModel)]=createItemData.status name="status" placeholder='Select Status' class="form-control" required>
+                            <option value="Overdue" selected>Overdue</option>
+                            <option value="Done">Done</option>
+                            <option value="In Progress">In Progress</option>
+                            </select>
+                        </span>
+                      </td>
+                    <td>
+                      
+                      <span class="fa-stack " *ngIf="i == selectedItem" (click)="edit(createItemData)">
+                          <i class="fa fa-square fa-stack-2x"></i>
+                          <i class="fa fa-floppy-o fa-stack-1x fa-inverse"></i>
+                        </span>
+                        <span class="fa-stack table-link danger" *ngIf="i == selectedItem" (click)="selectedItem = null;createItemData = null">
+                          <i class="fa fa-square fa-stack-2x"></i>
+                          <i class="fa fa-ban fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
